@@ -1,0 +1,33 @@
+<!-- <p *ngFor="let name of names; let i=index">{{ i }} {{ name }}</p> -->
+
+<mat-card>
+	<mat-list>
+		<mat-selection-list #selectedNames>
+			<mat-list-option *ngFor="let name of names"> {{ name }} </mat-list-option>
+		</mat-selection-list>
+	</mat-list>
+	<mat-card>
+		<p>
+			Options selected: {{ selectedNames.selectedOptions.selected.length }}
+		</p>
+	</mat-card>
+</mat-card>
+
+<mat-card>
+	<mat-list>
+		<h3 matSubheader> Names</h3>
+		<mat-list-item *ngFor="let name of names">
+			<mat-icon matListIcon>person</mat-icon>
+			<h4 matLine>{{ name }}</h4>
+		</mat-list-item>
+
+		<mat-divider></mat-divider>
+
+		<h3 matSubheader> Cities</h3>
+		<mat-list-item *ngFor="let city of cities">
+			<mat-icon matListIcon>location_city</mat-icon>
+			<h4 matLine>{{ city.name }} </h4>
+			<h4 matLine>{{ city.uf }}</h4>
+		</mat-list-item>
+	</mat-list>
+</mat-card>

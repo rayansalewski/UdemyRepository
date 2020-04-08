@@ -1,0 +1,27 @@
+.classe1 {
+    color: blueviolet;
+    padding: 20px;
+    background-color: bisque;
+    font-size: 20px;
+}
+
+.classe2 {
+    color: rgb(129, 235, 8);
+    padding: 22px;
+    background-color: rgb(236, 5, 63);
+    font-size: 24px;
+}
+
+.classe3 {
+    color: rgb(255, 13, 13);
+    padding: 24px;
+    background-color: rgb(233, 128, 0);
+    font-size: 26px;
+}
+
+.classe4 {
+    color: rgb(34, 33, 34);
+    padding: 26px;
+    background-color: rgb(11, 151, 206);
+    font-size: 29px;
+}

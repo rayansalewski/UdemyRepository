@@ -1,0 +1,23 @@
+<mat-card>
+  <mat-card-content>
+    <mat-list>
+      <h3 mat-subheader>Users</h3>
+
+      <ng-container *ngFor="let user of users">
+        <mat-list-item *ngIf="typeAccount=='noRole' || typeAccount==user.role">
+          <mat-icon mat-list-icon>folder</mat-icon>
+          <h4 mat-line>{{user.login}}</h4>
+          <h4 mat-line>{{user.role}}</h4>
+          <h4 mat-line>{{user.date | date}}</h4>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      </ng-container>
+      <p>Chose role:</p>
+      <mat-radio-group [(ngModel)]="typeAccount">
+        <mat-radio-button value="admin">Admin</mat-radio-button>
+        <mat-radio-button value="user">User</mat-radio-button>
+        <mat-radio-button value="noRole">No Role</mat-radio-button>
+      </mat-radio-group>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

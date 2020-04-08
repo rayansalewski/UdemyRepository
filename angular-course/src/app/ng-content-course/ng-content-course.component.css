@@ -1,0 +1,14 @@
+body {
+  background-color: rgb(175, 175, 175);
+}
+
+mat-card {
+  margin: 20px;
+  width: 400px;
+}
+
+img{
+  width: 80%;
+  display: block;
+  margin: auto;
+}

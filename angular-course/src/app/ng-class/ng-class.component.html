@@ -1,0 +1,21 @@
+<mat-card>
+    <mat-card-title>
+      Select
+    </mat-card-title>
+    <mat-card-content>
+      Please, select one class:
+      <mat-form-field>
+        <mat-select placeholder="Choose the Class:" [(ngModel)]="chooseClass" name="classOption">
+          <mat-option value="classe1">Class 1</mat-option>
+          <mat-option value="classe2">Class 2</mat-option>
+          <mat-option value="classe3">Class 3</mat-option>
+          <mat-option value="classe4">Class 4</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-footer>
+        <p>Result: </p>
+        <p [ngClass]="chooseClass">TESTE</p>
+    </mat-card-footer>
+  </mat-card>
+  
