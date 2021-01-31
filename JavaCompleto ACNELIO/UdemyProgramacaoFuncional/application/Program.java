@@ -2,8 +2,10 @@ package application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import entities.Product;
+import util.ProductService;
 
 public class Program {
 	public static void main(String[] args) {
@@ -22,11 +24,37 @@ public class Program {
 		
 		list.forEach(System.out::println);
 		
+		System.out.println("\nConsumer");
 		
-		System.out.println("\nPredicate");
 		//Predicado ou Predicate
-		list.removeIf(p -> p.getValue() >= 100);
+		//list.removeIf(p -> p.getValue() >= 100);
+		
+		//Consumer com reference methods
+		//list.forEach(Product::priceUpdate);
+		list.forEach(p -> p.setValue(p.getValue() * 1.1));
 		
 		list.forEach(System.out::println);
+		
+		System.out.println("\nPredicate");
+		
+		//Predicate com reference methods
+		list.removeIf(Product::staticProductPredicate);
+		
+		list.forEach(System.out::println);
+		
+		System.out.println("\nFunction");
+		
+		List<String> names = list.stream().map(Product::upperCaseListProduct).collect(Collectors.toList());
+		
+		names.forEach(System.out::println);
+		
+		System.out.println("\nFunction with function");
+		
+		ProductService ps = new ProductService();
+		
+		double sum = ps.filtredSum(list, p -> p.getValue() <= 100);
+		
+		System.out.println("Sum: " + sum);
+
 	}
 }
