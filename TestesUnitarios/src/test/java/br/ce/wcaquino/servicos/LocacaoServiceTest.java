@@ -5,6 +5,7 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
+import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
@@ -15,11 +16,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static br.ce.wcaquino.matchers.MatchersProprios.*;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.*;
 
 public class LocacaoServiceTest {
 
@@ -60,7 +64,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
-		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
 		//acao
 		Locacao locacao = service.alugarFilme(usuario, filme);
@@ -68,7 +72,7 @@ public class LocacaoServiceTest {
 		//verificacao
 		error.checkThat(locacao.getValor(), is(equalTo(10.0)));
 		error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+		error.checkThat(locacao.getDataRetorno(), ehHojeComDiferenca(1));
 	}
 	
 	@Test(expected = FilmeSemEstoqueException.class)
@@ -84,7 +88,7 @@ public class LocacaoServiceTest {
 		//acao
 		try {
 			service.alugarFilme(null, filme);
-			Assert.fail();
+			fail();
 		} catch (LocadoraException e) {
 			assertThat(e.getMessage(), is("Usuario vazio"));
 		}
@@ -118,11 +122,11 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveDevolverFilmeAlugadoNoSabadoNaSegunda() throws Exception {
-		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
 		//acao
 		Locacao locacao = service.alugarFilme(usuario, filme);
 
-		Assert.assertTrue(DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY));
+		assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
 	}
 }
