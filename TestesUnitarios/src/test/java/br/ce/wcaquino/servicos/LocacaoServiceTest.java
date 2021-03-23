@@ -1,5 +1,7 @@
 package br.ce.wcaquino.servicos;
 
+import br.ce.wcaquino.builders.FilmeBuilder;
+import br.ce.wcaquino.builders.UsuarioBuilder;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -45,11 +47,11 @@ public class LocacaoServiceTest {
 	public void init() {
 		//cenario
 		this.service = new LocacaoService();
-		this.usuario = new Usuario("Usuario 1");
+		this.usuario = UsuarioBuilder.umUsuario().agora();
 		this.filme = new ArrayList<>();
 
-		this.filme.add(new Filme("Filme 1", 1, 5.0));
-		this.filme.add(new Filme("Filme 2", 2, 5.0));
+		this.filme.add(FilmeBuilder.umFilme().agora());
+		this.filme.add(FilmeBuilder.umFilme().agora());
 	}
 
 	@After
@@ -71,13 +73,13 @@ public class LocacaoServiceTest {
 			
 		//verificacao
 		error.checkThat(locacao.getValor(), is(equalTo(10.0)));
-		error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+		error.checkThat(locacao.getDataLocacao(), ehHoje());
 		error.checkThat(locacao.getDataRetorno(), ehHojeComDiferenca(1));
 	}
 	
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void deveLancarExcecaofilmeSemEstoque() throws Exception{
-		this.filme.add(new Filme("Filme 3", 0, 5.0));
+		this.filme.add(FilmeBuilder.umFilmeSemEstoque().agora());
 		//acao
 		service.alugarFilme(usuario, filme);
 	}

@@ -1,11 +1,13 @@
 import br.ce.wcaquino.entidades.Usuario;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
 
 public class AssertTest {
 
     @Test
-    public static void test() {
+    public void test() {
         Assert.assertTrue(true);
         Assert.assertFalse(false);
 

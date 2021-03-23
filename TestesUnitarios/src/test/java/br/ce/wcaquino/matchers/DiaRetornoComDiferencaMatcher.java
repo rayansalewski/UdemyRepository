@@ -23,6 +23,6 @@ public class DiaRetornoComDiferencaMatcher extends TypeSafeMatcher<Date> {
 
     @Override
     public void describeTo(Description description) {
-
+        description.appendText(obterDataComDiferencaDias(diferencaDias).toString());
     }
 }

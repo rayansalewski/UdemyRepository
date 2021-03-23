@@ -12,5 +12,7 @@ public class MatchersProprios {
         return new DiaDaSemanaMatcher(Calendar.MONDAY);
     }
 
-    public static DiaRetornoComDiferencaMatcher ehHojeComDiferenca(int diferenca) {return new DiaRetornoComDiferencaMatcher(diferenca);}
+    public static DiaRetornoComDiferencaMatcher ehHojeComDiferenca(int diferenca) { return new DiaRetornoComDiferencaMatcher(diferenca);}
+
+    public static  DiaRetornoComDiferencaMatcher ehHoje() { return new DiaRetornoComDiferencaMatcher(0);}
 }
