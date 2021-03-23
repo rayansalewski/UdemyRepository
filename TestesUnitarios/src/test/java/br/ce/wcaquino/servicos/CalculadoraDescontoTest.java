@@ -1,5 +1,6 @@
 package br.ce.wcaquino.servicos;
 
+import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -10,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +40,8 @@ public class CalculadoraDescontoTest {
     public void init() {
         //cenario
         this.service = new LocacaoService();
-
+        service.setDao(Mockito.mock(LocacaoDAO.class));
+        service.setSPCService(Mockito.mock(SPCService.class));
     }
 
     private static Filme filme1 = new Filme("Filme 1", 1, 5.0);

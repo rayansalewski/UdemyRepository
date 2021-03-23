@@ -2,6 +2,7 @@ package br.ce.wcaquino.servicos;
 
 import br.ce.wcaquino.builders.FilmeBuilder;
 import br.ce.wcaquino.builders.UsuarioBuilder;
+import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -12,6 +13,7 @@ import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +41,8 @@ public class LocacaoServiceTest {
 
 	private LocacaoService service;
 
+	private SPCService spc;
+
 	private Usuario usuario;
 
 	private List<Filme> filme;
@@ -47,9 +51,13 @@ public class LocacaoServiceTest {
 	public void init() {
 		//cenario
 		this.service = new LocacaoService();
-		this.usuario = UsuarioBuilder.umUsuario().agora();
-		this.filme = new ArrayList<>();
+		service.setDao(Mockito.mock(LocacaoDAO.class));
+		spc = Mockito.mock(SPCService.class);
+		service.setSPCService(spc);
 
+		this.usuario = UsuarioBuilder.umUsuario().agora();
+
+		this.filme = new ArrayList<>();
 		this.filme.add(FilmeBuilder.umFilme().agora());
 		this.filme.add(FilmeBuilder.umFilme().agora());
 	}
@@ -131,4 +139,17 @@ public class LocacaoServiceTest {
 
 		assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
 	}
+
+	@Test
+	public void naoDeveAlugarFilmeUsuariosNegativados() throws Exception {
+
+		exception.expect(LocadoraException.class);
+		exception.expectMessage("Usuario negativado");
+
+		Mockito.when(spc.isUsuarioNegativado(usuario)).thenReturn(true);
+
+		//acao
+		Locacao locacao = service.alugarFilme(usuario, filme);
+	}
+
 }

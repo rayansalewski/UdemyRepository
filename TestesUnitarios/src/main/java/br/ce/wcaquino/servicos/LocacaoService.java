@@ -1,5 +1,6 @@
 package br.ce.wcaquino.servicos;
 
+import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -15,6 +16,12 @@ import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
 
 public class LocacaoService {
 
+	private LocacaoDAO dao;
+	private SPCService spc;
+
+	public LocacaoService() {
+	}
+
 	public Locacao alugarFilme(Usuario usuario, List<Filme> listaFilme) throws FilmeSemEstoqueException, LocadoraException {
 		if(usuario == null) {
 			throw new LocadoraException("Usuario vazio");
@@ -22,6 +29,10 @@ public class LocacaoService {
 
 		if(listaFilme == null) {
 			throw new LocadoraException("Filme vazio");
+		}
+
+		if (spc.isUsuarioNegativado(usuario)) {
+			throw new LocadoraException("Usuario negativado");
 		}
 
 		Locacao locacao = new Locacao();
@@ -70,8 +81,16 @@ public class LocacaoService {
 
 		//Salvando a locacao...
 		//TODO adicionar método para salvar
+		dao.salvar();
 
 		return locacao;
 	}
 
+	public void setDao(LocacaoDAO dao) {
+		this.dao = dao;
+	}
+
+	public void setSPCService(SPCService spc) {
+		this.spc = spc;
+	}
 }
