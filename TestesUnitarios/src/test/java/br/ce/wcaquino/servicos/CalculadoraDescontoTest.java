@@ -11,7 +11,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +28,13 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class CalculadoraDescontoTest {
 
+    @InjectMocks
     private LocacaoService service;
+
+    @Mock
+    private LocacaoDAO locacaoDAO;
+    @Mock
+    private SPCService spcService;
 
     @Parameter
     public List<Filme> listFilme;
@@ -40,8 +49,7 @@ public class CalculadoraDescontoTest {
     public void init() {
         //cenario
         this.service = new LocacaoService();
-        service.setDao(Mockito.mock(LocacaoDAO.class));
-        service.setSPCService(Mockito.mock(SPCService.class));
+        MockitoAnnotations.initMocks(this);
     }
 
     private static Filme filme1 = new Filme("Filme 1", 1, 5.0);

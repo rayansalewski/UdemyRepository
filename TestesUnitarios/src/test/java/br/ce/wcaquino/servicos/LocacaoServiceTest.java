@@ -8,26 +8,26 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
-import br.ce.wcaquino.matchers.MatchersProprios;
-import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import static br.ce.wcaquino.builders.LocacaoBuilder.*;
 import static br.ce.wcaquino.matchers.MatchersProprios.*;
-import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
-import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
+import static br.ce.wcaquino.utils.DataUtils.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.*;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.*;
 
 public class LocacaoServiceTest {
 
@@ -35,25 +35,28 @@ public class LocacaoServiceTest {
 
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
-	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 
+	@InjectMocks
 	private LocacaoService service;
 
+	@Mock
 	private SPCService spc;
+	@Mock
+	private EmailService emailService;
+	@Mock
+	private LocacaoDAO locacaoDAO;
 
 	private Usuario usuario;
-
 	private List<Filme> filme;
 
 	@Before
 	public void init() {
 		//cenario
 		this.service = new LocacaoService();
-		service.setDao(Mockito.mock(LocacaoDAO.class));
-		spc = Mockito.mock(SPCService.class);
-		service.setSPCService(spc);
+
+		MockitoAnnotations.initMocks(this);
 
 		this.usuario = UsuarioBuilder.umUsuario().agora();
 
@@ -74,7 +77,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
-		assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		assumeFalse(verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
 		//acao
 		Locacao locacao = service.alugarFilme(usuario, filme);
@@ -132,7 +135,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveDevolverFilmeAlugadoNoSabadoNaSegunda() throws Exception {
-		assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		assumeTrue(verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
 		//acao
 		Locacao locacao = service.alugarFilme(usuario, filme);
@@ -141,15 +144,41 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void naoDeveAlugarFilmeUsuariosNegativados() throws Exception {
+	public void naoDeveAlugarFilmeUsuariosNegativados() throws FilmeSemEstoqueException {
 
-		exception.expect(LocadoraException.class);
-		exception.expectMessage("Usuario negativado");
-
-		Mockito.when(spc.isUsuarioNegativado(usuario)).thenReturn(true);
+		when(spc.isUsuarioNegativado(any(Usuario.class))).thenReturn(true);
 
 		//acao
-		Locacao locacao = service.alugarFilme(usuario, filme);
+		try {
+			service.alugarFilme(usuario, filme);
+			Assert.fail();
+		} catch (LocadoraException e) {
+			Assert.assertThat(e.getMessage(), is("Usuario negativado"));
+		}
+
+		verify(spc).isUsuarioNegativado(usuario);
+	}
+
+	@Test
+	public void deveNotificarLocacoesEmAtraso() {
+
+		Usuario usuario2 = new Usuario("Sem Atraso");
+		Usuario usuario3 = new Usuario("Outro Atrasado");
+
+		List<Locacao> locacoes = Arrays.asList(
+				umaLocacao().comUsuario(usuario).comAtraso().agora(),
+				umaLocacao().comUsuario(usuario2).agora(),
+				umaLocacao().comUsuario(usuario3).comAtraso().agora());
+
+		when(locacaoDAO.getLocacoesEmAtraso()).thenReturn(locacoes);
+
+		service.notificarAtrasos();
+
+		verify(emailService, times(2)).notificaAtrasosUsuario(any(Usuario.class));
+		verify(emailService).notificaAtrasosUsuario(usuario);
+		verify(emailService, atLeastOnce()).notificaAtrasosUsuario(usuario3);
+		verify(emailService, never()).notificaAtrasosUsuario(usuario2);
+		verifyNoMoreInteractions(emailService);
 	}
 
 }

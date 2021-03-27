@@ -18,6 +18,7 @@ public class LocacaoService {
 
 	private LocacaoDAO dao;
 	private SPCService spc;
+	private EmailService emailService;
 
 	public LocacaoService() {
 	}
@@ -86,11 +87,12 @@ public class LocacaoService {
 		return locacao;
 	}
 
-	public void setDao(LocacaoDAO dao) {
-		this.dao = dao;
-	}
-
-	public void setSPCService(SPCService spc) {
-		this.spc = spc;
+	public void notificarAtrasos() {
+		List<Locacao> locacoes = dao.getLocacoesEmAtraso();
+		for (Locacao locacao : locacoes) {
+			if (locacao.getDataRetorno().before(new Date())) {
+				emailService.notificaAtrasosUsuario(locacao.getUsuario());
+			}
+		}
 	}
 }
