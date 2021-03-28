@@ -12,7 +12,6 @@ import br.ce.wcaquino.exceptions.LocadoraException;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.*;
 
 import java.lang.reflect.Method;
@@ -31,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
-@RunWith(ParallelRunner.class)
+//@RunWith(ParallelRunner.class)
 public class LocacaoServiceTest {
 
 	static int contador = 0;

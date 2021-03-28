@@ -2,11 +2,10 @@ package br.ce.wcaquino.builders;
 
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
-import br.ce.wcaquino.utils.DataUtils;
 
 import java.util.Date;
 
-import static br.ce.wcaquino.utils.DataUtils.*;
+import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 
 public class LocacaoBuilder {
 

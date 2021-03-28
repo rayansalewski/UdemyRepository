@@ -1,8 +1,6 @@
 import br.ce.wcaquino.entidades.Usuario;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
 
 public class AssertTest {
 

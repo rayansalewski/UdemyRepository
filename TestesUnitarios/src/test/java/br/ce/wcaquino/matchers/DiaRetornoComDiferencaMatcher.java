@@ -6,10 +6,9 @@ import org.hamcrest.TypeSafeMatcher;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
-import static br.ce.wcaquino.utils.DataUtils.*;
+import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 
 public class DiaRetornoComDiferencaMatcher extends TypeSafeMatcher<Date> {
 
