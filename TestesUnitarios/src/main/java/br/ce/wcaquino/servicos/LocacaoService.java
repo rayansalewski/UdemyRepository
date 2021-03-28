@@ -51,7 +51,7 @@ public class LocacaoService {
 		locacao.setDataLocacao(new Date());
 
 		locacao.isVerificaEstoqueFilme();
-		locacao.calculaValorTotal();
+		locacao.setValor(calculaValorTotal(listaFilme));
 
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();
@@ -89,5 +89,21 @@ public class LocacaoService {
 		novaLocacao.setValor(locacao.getValor() * dias);
 
 		dao.salvar(novaLocacao);
+	}
+
+	private Double calculaValorTotal(List<Filme> filmes) {
+		double total = 0;
+		if(!filmes.isEmpty()) {
+			for (int i = 0; i < filmes.size(); i++){
+				switch (i) {
+					case 2: total += filmes.get(i).getPrecoLocacao() * 0.75; break;
+					case 3: total += filmes.get(i).getPrecoLocacao() * 0.5; break;
+					case 4: total += filmes.get(i).getPrecoLocacao() * 0.25; break;
+					case 5: total += filmes.get(i).getPrecoLocacao() * 0.0; break;
+					default: total += filmes.get(i).getPrecoLocacao();
+				}
+			}
+		}
+		return total;
 	}
 }

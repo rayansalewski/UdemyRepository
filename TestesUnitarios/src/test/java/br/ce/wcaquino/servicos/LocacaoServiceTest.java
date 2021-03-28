@@ -19,17 +19,18 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import static br.ce.wcaquino.builders.LocacaoBuilder.umaLocacao;
 import static br.ce.wcaquino.matchers.MatchersProprios.*;
 import static br.ce.wcaquino.utils.DataUtils.obterData;
-import static br.ce.wcaquino.utils.DataUtils.verificarDiaSemana;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
@@ -64,6 +65,8 @@ public class LocacaoServiceTest {
 		MockitoAnnotations.initMocks(this);
 
 		this.usuario = UsuarioBuilder.umUsuario().agora();
+
+		this.service = PowerMockito.spy(service);
 
 		this.filmes = new ArrayList<>();
 		this.filmes.add(FilmeBuilder.umFilme().agora());
@@ -238,6 +241,19 @@ public class LocacaoServiceTest {
 		error.checkThat(locacaoCapturada.getValor(), is(15.0));
 		error.checkThat(locacaoCapturada.getDataLocacao(), ehHoje());
 		error.checkThat(locacaoCapturada.getDataRetorno(), ehHojeComDiferenca(3));
+	}
+
+	@Test
+	public void naoDeveCalcularValor() throws Exception {
+
+		//Se o metodo fosse privado no service
+		PowerMockito.doReturn(1.0).when(service, "calculaValorTotal", filmes);
+
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+
+		Assert.assertThat(locacao.getValor(), is(1.0));
+		PowerMockito.verifyPrivate(service).invoke("calculaValorTotal", filmes);
+
 	}
 
 }

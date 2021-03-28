@@ -42,7 +42,7 @@ public class Locacao {
 	public List<Filme> getFilme() {return filme;}
 	public void setFilme(List<Filme> filme) {this.filme = filme;}
 
-	public void calculaValorTotal() {
+/*	public void calculaValorTotal() {
 		HashMap<Integer, Double> descontos = new HashMap<>();
 		descontos.put(3, 0.75);
 		descontos.put(4, 0.5);
@@ -61,7 +61,7 @@ public class Locacao {
 
 			setValor(total);
 		}
-	}
+	}*/
 
 	public void isVerificaEstoqueFilme() throws FilmeSemEstoqueException {
 		if(!getFilme().isEmpty()) {
