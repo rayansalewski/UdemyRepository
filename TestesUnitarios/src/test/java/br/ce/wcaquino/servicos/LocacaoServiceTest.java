@@ -9,28 +9,31 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
+import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.*;
 
 import static br.ce.wcaquino.builders.LocacaoBuilder.umaLocacao;
 import static br.ce.wcaquino.matchers.MatchersProprios.*;
+import static br.ce.wcaquino.utils.DataUtils.obterData;
 import static br.ce.wcaquino.utils.DataUtils.verificarDiaSemana;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.*;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({LocacaoService.class, DataUtils.class})
 public class LocacaoServiceTest {
 
 	static int contador = 0;
@@ -79,7 +82,9 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
-		assumeFalse(verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		//assumeFalse(verificarDiaSemana(new Date(), Calendar.SATURDAY));
+
+		PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(obterData(26, 3, 2021));
 
 		//acao
 		Locacao locacao = service.alugarFilme(usuario, filmes);
@@ -111,19 +116,22 @@ public class LocacaoServiceTest {
 
 
 	@Test
-	public void naoDeveAlugarFilmeSemFilme() throws FilmeSemEstoqueException, LocadoraException{
+	public void naoDeveAlugarFilmeSemFilme() throws FilmeSemEstoqueException, LocadoraException {
 
 		//Novo modo devido a depreciação do ExpectedException.none();
 
 		//Como era e como deve ser
-		//exception.expect(LocadoraException.class);
-		//exception.expectMessage("Filme vazio");
+		exception.expect(LocadoraException.class);
+		exception.expectMessage("Filme vazio");
 		//acao
-		//service.alugarFilme(usuario, null);
+		service.alugarFilme(usuario, null);
 
-		assertThrows("Filme vazio", LocadoraException.class, () -> {
-			service.alugarFilme(usuario, null);
-		});
+		/* assertThrows("Filme vazio",
+				LocadoraException.class,
+				() -> {
+					service.alugarFilme(usuario, null);
+				});
+		 */
 	}
 
 	@Test
@@ -143,12 +151,14 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveDevolverFilmeAlugadoNoSabadoNaSegunda() throws Exception {
-		assumeTrue(verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		//assumeTrue(verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(obterData(27, 3, 2021));
 
 		//acao
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
+		PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
 	}
 
 	@Test
