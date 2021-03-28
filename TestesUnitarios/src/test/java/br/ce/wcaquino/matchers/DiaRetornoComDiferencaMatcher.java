@@ -4,6 +4,9 @@ import br.ce.wcaquino.utils.DataUtils;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import static br.ce.wcaquino.utils.DataUtils.*;
@@ -23,6 +26,9 @@ public class DiaRetornoComDiferencaMatcher extends TypeSafeMatcher<Date> {
 
     @Override
     public void describeTo(Description description) {
-        description.appendText(obterDataComDiferencaDias(diferencaDias).toString());
+        Date dataEsperada = obterDataComDiferencaDias(diferencaDias);
+        DateFormat dataFormatada = new SimpleDateFormat("dd/MM/yyyy");
+
+        description.appendText(dataFormatada.format(dataEsperada));
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class LocacaoDAOFake implements LocacaoDAO{
     @Override
-    public void salvar() {
+    public void salvar(Locacao locacao) {
 
     }
 

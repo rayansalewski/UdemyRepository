@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
+import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 
 public class LocacaoService {
 
@@ -32,7 +33,15 @@ public class LocacaoService {
 			throw new LocadoraException("Filme vazio");
 		}
 
-		if (spc.isUsuarioNegativado(usuario)) {
+		boolean usuarioNegativado;
+
+		try {
+			usuarioNegativado = spc.isUsuarioNegativado(usuario);
+		} catch (Exception e) {
+			throw new LocadoraException("Problemas com o SPC, tente novamente");
+		}
+
+		if (usuarioNegativado) {
 			throw new LocadoraException("Usuario negativado");
 		}
 
@@ -47,42 +56,16 @@ public class LocacaoService {
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();
 		dataEntrega = adicionarDias(dataEntrega, 1);
-		locacao.setDataRetorno(dataEntrega);
 
-		//Salvando a locacao...
-		//TODO adicionar método para salvar
-
-		return locacao;
-	}
-
-	public Locacao alugarFilmeComDesconto(Usuario usuario, List<Filme> listaFilme) throws FilmeSemEstoqueException, LocadoraException {
-		if(usuario == null) {
-			throw new LocadoraException("Usuario vazio");
-		}
-
-		if(listaFilme == null) {
-			throw new LocadoraException("Filme vazio");
-		}
-
-		Locacao locacao = new Locacao();
-		locacao.setFilme(listaFilme);
-		locacao.setUsuario(usuario);
-		locacao.setDataLocacao(new Date());
-
-		locacao.isVerificaEstoqueFilme();
-		locacao.calculaValorTotalComDesconto();
-
-		//Entrega no dia seguinte
-		Date dataEntrega = new Date();
-		dataEntrega = adicionarDias(dataEntrega, 1);
-		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SATURDAY)){
+		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)){
 			dataEntrega = adicionarDias(dataEntrega, 1);
 		}
+
 		locacao.setDataRetorno(dataEntrega);
 
 		//Salvando a locacao...
 		//TODO adicionar método para salvar
-		dao.salvar();
+		dao.salvar(locacao);
 
 		return locacao;
 	}
@@ -94,5 +77,17 @@ public class LocacaoService {
 				emailService.notificaAtrasosUsuario(locacao.getUsuario());
 			}
 		}
+	}
+
+	public void  prorrogarDataLocacao(Locacao locacao, int dias){
+		Locacao novaLocacao = new Locacao();
+
+		novaLocacao.setUsuario(locacao.getUsuario());
+		novaLocacao.setFilme(locacao.getFilme());
+		novaLocacao.setDataLocacao(new Date());
+		novaLocacao.setDataRetorno(obterDataComDiferencaDias(dias));
+		novaLocacao.setValor(locacao.getValor() * dias);
+
+		dao.salvar(novaLocacao);
 	}
 }

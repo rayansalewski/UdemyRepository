@@ -73,7 +73,7 @@ public class CalculadoraDescontoTest {
     public void locacaoFilmeComDesconto() throws Exception {
 
         //acao
-        Locacao locacao = service.alugarFilmeComDesconto(new Usuario("Usuario 1"), listFilme);
+        Locacao locacao = service.alugarFilme(new Usuario("Usuario 1"), listFilme);
 
         //verificacao
         assertThat(locacao.getValor(), is(equalTo(valorLocacao)));

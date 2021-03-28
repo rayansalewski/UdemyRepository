@@ -36,20 +36,13 @@ public class Locacao {
 	public Double getValor() {
 		return valor;
 	}
-	private void setValor(Double valor) {
+	public void setValor(Double valor) {
 		this.valor = valor;
 	}
 	public List<Filme> getFilme() {return filme;}
 	public void setFilme(List<Filme> filme) {this.filme = filme;}
 
 	public void calculaValorTotal() {
-		if(!getFilme().isEmpty()) {
-			setValor(getFilme().stream().mapToDouble(Filme::getPrecoLocacao).sum());
-		}
-
-	}
-
-	public void calculaValorTotalComDesconto() {
 		HashMap<Integer, Double> descontos = new HashMap<>();
 		descontos.put(3, 0.75);
 		descontos.put(4, 0.5);

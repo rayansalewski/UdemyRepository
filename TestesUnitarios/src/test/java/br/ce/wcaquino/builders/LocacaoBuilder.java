@@ -21,6 +21,7 @@ public class LocacaoBuilder {
         locacaoBuilder.locacao.setDataLocacao(new Date());
         locacaoBuilder.locacao.setDataRetorno(obterDataComDiferencaDias(2));
         locacaoBuilder.locacao.setUsuario(new Usuario("usuario"));
+        locacaoBuilder.locacao.setValor(5.0);
 
         return locacaoBuilder;
     }
