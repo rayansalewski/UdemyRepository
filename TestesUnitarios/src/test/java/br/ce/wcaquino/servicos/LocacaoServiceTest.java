@@ -154,11 +154,25 @@ public class LocacaoServiceTest {
 		//assumeTrue(verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(obterData(27, 3, 2021));
 
+		//PowerMock para metodos staticos
+/*		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, 27);
+		calendar.set(Calendar.MONTH, 3);
+		calendar.set(Calendar.YEAR, 2012);
+		PowerMockito.mockStatic(Calendar.class);
+		PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);*/
+
 		//acao
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
 		PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
+
+		//Verificacao de metodo estatico
+		/*
+		PowerMockito.verifyStatic(Mockito.times(2);
+		Calendar.getInstance();
+		*/
 	}
 
 	@Test
